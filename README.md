@@ -14,14 +14,13 @@
 ```kotlin
 repositories {
     mavenCentral()
+	maven(url = "https://jitpack.io")
 }
 
 dependencies {
-    implementation("io.github.gomarketme:gomarketme-kotlin:1.0.0")
+    implementation("com.github.gomarketme:gomarketme-kotlin:1.0.0")
 }
 ```
-
-2. Choose and add to your dependencies one of [Ktor's engines](https://ktor.io/docs/http-client-engines.html). In case of Kotlin Multiplatform project, add an engine to each target.
 
 ## 🧑‍💻 Usage
 

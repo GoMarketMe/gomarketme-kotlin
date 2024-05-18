@@ -1,15 +1,21 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# User-specific files
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+*.ipr
+*.iws
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# Local configuration files
 local.properties
+gradle.properties
+
+# Ignore Gradle user home directory
+~/.gradle
+
+# Android
+/app/build/

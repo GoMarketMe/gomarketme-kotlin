@@ -1,6 +1,7 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     kotlin("android")
+    id("maven-publish")
 }
 
 android {
@@ -8,12 +9,11 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "co.gomarketme.kotlin"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 34 // Update based on deprecation warning
+        version = "1.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -31,6 +31,41 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+tasks.register<Jar>("releaseSourcesJar") {
+    archiveClassifier.set("sources")
+    from(android.sourceSets["main"].java.srcDirs)
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("gpr") {
+                from(components["release"]) // Access component after evaluation
+                groupId = "com.github.GoMarketMe"
+                artifactId = "gomarketme-kotlin"
+                version = "1.0.1"
+            }
+        }
+
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/GoMarketMe/gomarketme-kotlin")
+                credentials {
+                    username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
+                    password = project.findProperty("gpr.token") as String? ?: System.getenv("GPR_TOKEN")
+                }
+            }
+        }
     }
 }
 
