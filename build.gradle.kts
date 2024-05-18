@@ -1,19 +1,10 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:7.4.1")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
-    }
+plugins {
+    id("com.android.application") version "8.4.0" apply false
+    kotlin("android") version "1.9.10" apply false
 }
 
 allprojects {
     repositories {
-        google()
-        mavenCentral()
+        // These are now unnecessary due to settings.gradle.kts central configuration
     }
 }
