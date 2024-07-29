@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.gomarketme:gomarketme-kotlin:1.0.0")
+    implementation("com.github.GoMarketMe:gomarketme-kotlin:1.0.4")
 }
 ```
 
