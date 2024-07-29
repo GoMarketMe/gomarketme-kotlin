@@ -1,69 +1,40 @@
 plugins {
     id("com.android.library")
-    kotlin("android")
+    id("org.jetbrains.kotlin.android")
     id("maven-publish")
 }
 
 android {
-    namespace = "co.gomarketme.kotlin"
     compileSdk = 34
-
     defaultConfig {
         minSdk = 24
-        targetSdk = 34 // Update based on deprecation warning
-        version = "1.0.1"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+        targetSdk = 34
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
-}
-
-tasks.register<Jar>("releaseSourcesJar") {
-    archiveClassifier.set("sources")
-    from(android.sourceSets["main"].java.srcDirs)
-    duplicatesStrategy = DuplicatesStrategy.WARN
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("gpr") {
-                from(components["release"]) // Access component after evaluation
-                groupId = "com.github.GoMarketMe"
-                artifactId = "gomarketme-kotlin"
-                version = "1.0.1"
-            }
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            from(components["release"])
+            groupId = "com.github.GoMarketMe"
+            artifactId = "gomarketme-kotlin"
+            version = "1.0.2"
         }
-
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/GoMarketMe/gomarketme-kotlin")
-                credentials {
-                    username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
-                    password = project.findProperty("gpr.token") as String? ?: System.getenv("GPR_TOKEN")
-                }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/GoMarketMe/gomarketme-kotlin")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
+                password = project.findProperty("gpr.token") as String? ?: System.getenv("GPR_TOKEN")
             }
         }
     }
