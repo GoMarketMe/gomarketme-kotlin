@@ -11,7 +11,7 @@ android {
     defaultConfig {
         minSdk = 33 // Minimum Android 13
         targetSdk = 34
-        version = "1.0.5"
+        version = "1.0.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -70,7 +70,7 @@ afterEvaluate {
                 from(components["release"]) // Access component after evaluation
                 groupId = "com.github.GoMarketMe"
                 artifactId = "gomarketme-kotlin"
-                version = "1.0.6"
+                version = "1.0.7"
             }
         }
 
