@@ -70,7 +70,7 @@ afterEvaluate {
                 from(components["release"]) // Access component after evaluation
                 groupId = "com.github.GoMarketMe"
                 artifactId = "gomarketme-kotlin"
-                version = "1.0.5"
+                version = "1.0.6"
             }
         }
 

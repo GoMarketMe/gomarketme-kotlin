@@ -1,6 +1,7 @@
 package co.gomarketme.kotlin
 
 import android.content.Context
+import android.provider.Settings
 import android.os.Build
 import android.util.DisplayMetrics
 import kotlinx.coroutines.CoroutineScope
@@ -128,21 +129,68 @@ object GoMarketMe {
         }
     }
 
+    private fun getAndroidId(context: Context): String {
+        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+    }
+
     private fun getSystemInfo(context: Context): Map<String, Any> {
         val metrics = context.resources.displayMetrics
         val deviceInfo = mapOf(
+            "androidId" to getAndroidId(context),
             "model" to Build.MODEL,
             "manufacturer" to Build.MANUFACTURER,
-            "version" to Build.VERSION.SDK_INT,
-            "screenWidth" to metrics.widthPixels,
-            "screenHeight" to metrics.heightPixels,
-            "density" to metrics.density
+            "systemVersion" to Build.VERSION.SDK_INT,
+            "SDK_INT" to Build.VERSION.SDK_INT,
+            "BASE_OS" to Build.VERSION.BASE_OS,
+            "RELEASE" to Build.VERSION.RELEASE,
+            "CODENAME" to Build.VERSION.CODENAME,
+            "INCREMENTAL" to Build.VERSION.INCREMENTAL,
+            "SDK" to Build.VERSION.SDK,
+            "MEDIA_PERFORMANCE_CLASS" to Build.VERSION.MEDIA_PERFORMANCE_CLASS,
+            "PREVIEW_SDK_INT" to Build.VERSION.PREVIEW_SDK_INT,
+            "RELEASE_OR_CODENAME" to Build.VERSION.RELEASE_OR_CODENAME,
+            "RELEASE_OR_PREVIEW_DISPLAY" to Build.VERSION.RELEASE_OR_PREVIEW_DISPLAY,
+            "SECURITY_PATCH" to Build.VERSION.SECURITY_PATCH,
+            "PREVIEW_SDK_INT" to Build.VERSION.PREVIEW_SDK_INT,
+            "USER" to Build.USER,
+        )
+
+        println("SDK_INT")
+        print(Build.VERSION.SDK_INT)
+        println("BASE_OS")
+        print(Build.VERSION.BASE_OS)
+        println("RELEASE")
+        print(Build.VERSION.RELEASE)
+        println("CODENAME")
+        print(Build.VERSION.CODENAME)
+        println("INCREMENTAL")
+        print(Build.VERSION.INCREMENTAL)
+        println("SDK")
+        print(Build.VERSION.SDK)
+        println("MEDIA_PERFORMANCE_CLASS")
+        print(Build.VERSION.MEDIA_PERFORMANCE_CLASS)
+        println("PREVIEW_SDK_INT")
+        print(Build.VERSION.PREVIEW_SDK_INT)
+        println("RELEASE_OR_CODENAME")
+        print(Build.VERSION.RELEASE_OR_CODENAME)
+        println("RELEASE_OR_PREVIEW_DISPLAY")
+        print(Build.VERSION.RELEASE_OR_PREVIEW_DISPLAY)
+        println("SECURITY_PATCH")
+        print(Build.VERSION.SECURITY_PATCH)
+        println("PREVIEW_SDK_INT")
+        print(Build.VERSION.PREVIEW_SDK_INT)
+
+        val windowInfo = mapOf(
+            "devicePixelRatio" to metrics.density,
+            "width" to metrics.widthPixels,
+            "height" to metrics.heightPixels
         )
 
         return mapOf(
             "device_info" to deviceInfo,
+            "window_info" to windowInfo,
             "time_zone" to TimeZone.getDefault().id,
-            "language" to Locale.getDefault().language
+            "language_code" to Locale.getDefault().language
         )
     }
 
