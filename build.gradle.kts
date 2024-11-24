@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "co.gomarketme"
-version = "1.0.7"
+version = "1.0.8"
 
 repositories {
     mavenCentral()
@@ -22,12 +22,12 @@ publishing {
             from(components["java"]) // Assumes a Java component for JVM-related modules
             groupId = "co.gomarketme"
             artifactId = "kotlin-sdk"
-            version = "1.0.7"
+            version = "1.0.8"
         }
     }
     repositories {
-        //mavenLocal() // Publish to local Maven repository
-        google()
+        mavenLocal() // Publish to local Maven repository
+        //google()
         mavenCentral()
         maven(url = "https://jitpack.io")
     }
