@@ -11,7 +11,7 @@ android {
     defaultConfig {
         minSdk = 24
         targetSdk = 34 // Update based on deprecation warning
-        version = "1.1.1"
+        version = "1.1.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -52,7 +52,7 @@ afterEvaluate {
                 from(components["release"]) // Access component after evaluation
                 groupId = "com.github.GoMarketMe"
                 artifactId = "gomarketme-kotlin"
-                version = "1.1.1"
+                version = "1.1.2"
             }
         }
 
