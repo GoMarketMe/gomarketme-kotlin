@@ -1,17 +1,16 @@
 plugins {
     id("com.android.library")
-    kotlin("android")
     id("maven-publish")
 }
 
+version = "4.0.1"
+
 android {
     namespace = "co.gomarketme.kotlin"
-    compileSdk = 34
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 34 // Update based on deprecation warning
-        version = "1.1.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -25,34 +24,29 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
+
 }
 
-repositories {
-    google()
-    mavenCentral()
-}
-
-tasks.register<Jar>("releaseSourcesJar") {
-    archiveClassifier.set("sources")
-    from(android.sourceSets["main"].java.srcDirs)
-    duplicatesStrategy = DuplicatesStrategy.WARN
-}
 
 afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("gpr") {
-                from(components["release"]) // Access component after evaluation
+                from(components["release"])
                 groupId = "com.github.GoMarketMe"
                 artifactId = "gomarketme-kotlin"
-                version = "1.1.2"
+                version = project.version.toString()
             }
         }
 
@@ -70,13 +64,11 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.8.0")
-    implementation("androidx.appcompat:appcompat:1.6.0")
-    implementation("com.google.android.material:material:1.7.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("com.android.billingclient:billing-ktx:8.3.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
 
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation("com.android.billingclient:billing-ktx:5.0.0") // Google Play Billing Library
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }

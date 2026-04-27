@@ -1,21 +1,33 @@
 # Gradle
 .gradle/
 build/
+**/build/
 !gradle/wrapper/gradle-wrapper.jar
 
-# User-specific files
+# Android Studio / IntelliJ user files
 .idea/
 *.iml
 *.ipr
 *.iws
-.DS_Store
 
-# Local configuration files
+# Local machine configuration and secrets
 local.properties
-gradle.properties
+*.keystore
+*.jks
+*.p12
+*.properties.local
 
-# Ignore Gradle user home directory
-~/.gradle
+# Build artifacts
+*.apk
+*.ap_
+*.aab
+*.aar
+*.jar
+*.dex
 
-# Android
-/app/build/
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
