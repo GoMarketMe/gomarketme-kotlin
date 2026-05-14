@@ -1,7 +1,7 @@
 <div align="center">
 	<img src="https://static.gomarketme.net/assets/gmm-icon.png" alt="GoMarketMe"/>
 	<br>
-    <h1>gomarketme-kotlin</h1>
+    <h1>GoMarketMe Kotlin SDK</h1>
 	<p>Affiliate marketing for Android apps.</p>
 </div>
 
@@ -20,40 +20,45 @@ Add GoMarketMe to your app dependencies:
 
 ```kotlin
 dependencies {
-    implementation("com.github.GoMarketMe:gomarketme-kotlin:4.0.1")
+    implementation("com.github.GoMarketMe:gomarketme-kotlin:5.0.0")
 }
 ```
 
 ## Usage
 
-### ⚙️ Basic Integration
+GoMarketMe takes only a few lines to set up.
+
+### Step 1/2: Initialize
 
 To initialize GoMarketMe, import the SDK and initialize it with your API key:
 
 ```kotlin
 import co.gomarketme.kotlin.GoMarketMe
 
+private val goMarketMeSDK = GoMarketMe
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        GoMarketMe.initialize(this, "API_KEY")
+        goMarketMeSDK.initialize(this, "API_KEY")
     }
 }
 ```
 
-No further steps needed. The SDK automatically attributes and reports your affiliate sales in real time.
+Replace `API_KEY` with your actual GoMarketMe API key. You can find it on the product onboarding page and under **Profile > API Key**.
 
-### ⚙️ OR - Advanced Integration ([Programmatic Affiliate Marketing](https://gomarketme.co/programmatic-affiliate-marketing/))
+### Alternative Step 1/2: Programmatic Affiliate Marketing
 
-Use this approach for more advanced scenarios, such as:
+For apps that want to customize the user experience based on affiliate attribution, initialize GoMarketMe and read affiliate marketing data after initialization.
 
-* Affiliate-aware paywalls: Offer exclusive pricing or promotions to users acquired through affiliate campaigns.
-* Personalized onboarding: For example, a social or fitness app can automatically make new users follow the influencer who referred them, strengthening engagement and maximizing the affiliate's impact.
+This enables [Programmatic Affiliate Marketing](https://gomarketme.co/programmatic-affiliate-marketing/), including affiliate-aware paywalls, personalized onboarding, promotions, and custom in-app experiences.
 
 ```kotlin
 import co.gomarketme.kotlin.GoMarketMe
 import co.gomarketme.kotlin.GoMarketMeAffiliateMarketingData
+
+private val goMarketMeSDK = GoMarketMe
 
 class MainActivity : AppCompatActivity() {
     private var affiliateData: GoMarketMeAffiliateMarketingData? = null
@@ -61,23 +66,77 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        GoMarketMe.initialize(this, "API_KEY")
+        goMarketMeSDK.initialize(this, "API_KEY")
 
-        val data = GoMarketMe.affiliateMarketingData
-        if (data != null) { // user acquired through affiliate campaign
-            println("Affiliate ID: ${data.affiliate.id}")                         // maps to GoMarketMe > Affiliates > Export > id column
-            println("Affiliate %: ${data.saleDistribution.affiliatePercentage}")  // maps to GoMarketMe > Campaigns > [Name] > Affiliate's Revenue Split (%)
-            println("Campaign ID: ${data.campaign.id}")                           // maps to GoMarketMe > Campaigns > [Name] > id in the URL
+        val data = goMarketMeSDK.affiliateMarketingData
+        if (data != null) {
+            // maps to GoMarketMe > Affiliates > Export > id column
+            println("Affiliate ID: ${data.affiliate.id}")
 
+            // maps to GoMarketMe > Campaigns > [Name] > Affiliate's Revenue Split (%)
+            println("Affiliate %: ${data.saleDistribution.affiliatePercentage}")
+            
+            // maps to GoMarketMe > Campaigns > [Name] > id in the URL
+            println("Campaign ID: ${data.campaign.id}")
+
+            // Use this data to customize onboarding, paywalls, promotions, or in-app experiences.
             affiliateData = data
         }
     }
 }
 ```
 
-`GoMarketMe.initialize(...)` runs asynchronously. If you need to read `affiliateMarketingData` immediately after initialization completes, wait until the SDK has finished posting system info before using the value.
+`goMarketMeSDK.initialize(...)` runs asynchronously. If you need to read `affiliateMarketingData`, wait until the SDK has finished preparing attribution before using the value.
 
-Make sure to replace `API_KEY` with your actual GoMarketMe API key. You can find it on the product onboarding page and under **Profile > API Key**.
+### Step 2/2: Sync after purchase
+
+After your app completes a purchase through Google Play Billing, RevenueCat, Adapty, or another in-app purchase provider, call:
+
+```kotlin
+lifecycleScope.launch {
+    goMarketMeSDK.syncAllTransactions()
+}
+```
+
+If your purchase library lets you decide when to acknowledge, consume, or complete the transaction, call `syncAllTransactions()` first.
+
+```kotlin
+private fun handlePurchase(purchase: Purchase) {
+    if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
+        lifecycleScope.launch {
+            goMarketMeSDK.syncAllTransactions()
+
+            val consumeParams = ConsumeParams.newBuilder()
+                .setPurchaseToken(purchase.purchaseToken)
+                .build()
+
+            billingClient.consumeAsync(consumeParams) { billingResult, _ ->
+                // Continue your purchase-completion flow.
+            }
+        }
+    }
+}
+```
+
+That's it. GoMarketMe automatically attributes and reports affiliate sales.
+
+## Platform Support
+
+GoMarketMe supports native Android apps using Kotlin.
+
+This SDK is designed for Android apps that sell in-app purchases or subscriptions through Google Play Billing, either directly or through a compatible in-app purchase provider.
+
+## IAP Provider Compatibility
+
+GoMarketMe works with any in-app purchase provider that ultimately completes purchases through Google Play Billing, including:
+
+- Google Play Billing
+- RevenueCat
+- Adapty
+- Qonversion
+- Superwall
+- Glassfy
+- Custom purchase flows built on Google Play Billing
 
 ## Support
 
