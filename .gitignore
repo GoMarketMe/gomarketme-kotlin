@@ -26,10 +26,26 @@ local.properties
 *.dex
 
 # Keep GoMarketMe native bridge jars used by SDK distribution
+!kotlin/
+!kotlin/libs/
+!kotlin/libs/*.jar
+
+!sdks/
+!sdks/kotlin/
+!sdks/kotlin/sdk/
+!sdks/kotlin/sdk/kotlin/
 !sdks/kotlin/sdk/kotlin/libs/
 !sdks/kotlin/sdk/kotlin/libs/*.jar
+
+!sdks/flutter/
+!sdks/flutter/sdk/
+!sdks/flutter/sdk/android/
 !sdks/flutter/sdk/android/libs/
 !sdks/flutter/sdk/android/libs/*.jar
+
+!sdks/react_native/
+!sdks/react_native/sdk/
+!sdks/react_native/sdk/android/
 !sdks/react_native/sdk/android/libs/
 !sdks/react_native/sdk/android/libs/*.jar
 

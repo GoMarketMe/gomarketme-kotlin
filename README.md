@@ -20,7 +20,7 @@ Add GoMarketMe to your app dependencies:
 
 ```kotlin
 dependencies {
-    implementation("com.github.GoMarketMe:gomarketme-kotlin:5.0.0")
+    implementation("com.github.GoMarketMe:gomarketme-kotlin:5.0.1")
 }
 ```
 
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-Replace `API_KEY` with your actual GoMarketMe API key. You can find it on the product onboarding page and under **Profile > API Key**.
+Replace `API_KEY` with your actual GoMarketMe API key. You can find it during onboarding or in **Profile > [API Key](https://gomarketme.net/marketer/profile/#account-settings)**.
 
 ### Alternative Step 1/2: Programmatic Affiliate Marketing
 

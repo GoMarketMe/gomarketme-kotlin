@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-version = "5.0.0"
+version = "5.0.1"
 
 android {
     namespace = "co.gomarketme.kotlin"
@@ -64,7 +64,7 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation(files("libs/core-5.0.0.jar"))
+    implementation(files("libs/core-5.0.1.jar"))
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("com.android.billingclient:billing-ktx:8.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
