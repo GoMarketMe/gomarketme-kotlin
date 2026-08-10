@@ -3,11 +3,11 @@ plugins {
     id("maven-publish")
 }
 
-version = "5.0.1"
+version = "5.0.2"
 
 android {
     namespace = "co.gomarketme.kotlin"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24

@@ -103,7 +103,7 @@ data class GoMarketMeTransactionSyncResult(
 
 object GoMarketMe {
     private const val sdkType = "Kotlin"
-    private const val sdkVersion = "5.0.1"
+    private const val sdkVersion = "5.0.2"
 
     private var core: GoMarketMeGoogleCore? = null
 

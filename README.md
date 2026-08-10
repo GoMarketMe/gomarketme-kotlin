@@ -20,7 +20,7 @@ Add GoMarketMe to your app dependencies:
 
 ```kotlin
 dependencies {
-    implementation("com.github.GoMarketMe:gomarketme-kotlin:5.0.1")
+    implementation("com.github.GoMarketMe:gomarketme-kotlin:5.0.2")
 }
 ```
 
