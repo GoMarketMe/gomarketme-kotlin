@@ -20,7 +20,7 @@ Add GoMarketMe to your app dependencies:
 
 ```kotlin
 dependencies {
-    implementation("com.github.GoMarketMe:gomarketme-kotlin:5.0.2")
+    implementation("com.github.GoMarketMe:gomarketme-kotlin:6.0.0")
 }
 ```
 
@@ -28,7 +28,7 @@ dependencies {
 
 GoMarketMe takes only a few lines to set up.
 
-### Step 1/2: Initialize
+### Step 1: Initialize
 
 To initialize GoMarketMe, import the SDK and initialize it with your API key:
 
@@ -48,49 +48,9 @@ class MainActivity : AppCompatActivity() {
 
 Replace `API_KEY` with your actual GoMarketMe API key. You can find it during onboarding or in **Profile > [API Key](https://gomarketme.net/marketer/profile/#account-settings)**.
 
-### Alternative Step 1/2: Programmatic Affiliate Marketing
+### Step 2: Sync Purchases (recommended)
 
-For apps that want to customize the user experience based on affiliate attribution, initialize GoMarketMe and read affiliate marketing data after initialization.
-
-This enables [Programmatic Affiliate Marketing](https://gomarketme.co/programmatic-affiliate-marketing/), including affiliate-aware paywalls, personalized onboarding, promotions, and custom in-app experiences.
-
-```kotlin
-import co.gomarketme.kotlin.GoMarketMe
-import co.gomarketme.kotlin.GoMarketMeAffiliateMarketingData
-
-private val goMarketMeSDK = GoMarketMe
-
-class MainActivity : AppCompatActivity() {
-    private var affiliateData: GoMarketMeAffiliateMarketingData? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        goMarketMeSDK.initialize(this, "API_KEY")
-
-        val data = goMarketMeSDK.affiliateMarketingData
-        if (data != null) {
-            // maps to GoMarketMe > Affiliates > Export > id column
-            println("Affiliate ID: ${data.affiliate.id}")
-
-            // maps to GoMarketMe > Campaigns > [Name] > Affiliate's Revenue Split (%)
-            println("Affiliate %: ${data.saleDistribution.affiliatePercentage}")
-            
-            // maps to GoMarketMe > Campaigns > [Name] > id in the URL
-            println("Campaign ID: ${data.campaign.id}")
-
-            // Use this data to customize onboarding, paywalls, promotions, or in-app experiences.
-            affiliateData = data
-        }
-    }
-}
-```
-
-`goMarketMeSDK.initialize(...)` runs asynchronously. If you need to read `affiliateMarketingData`, wait until the SDK has finished preparing attribution before using the value.
-
-### Step 2/2: Sync after purchase
-
-After your app completes a purchase through Google Play Billing, RevenueCat, Adapty, or another in-app purchase provider, call:
+GoMarketMe automatically detects and reports purchases. For additional reliability, we also recommend manually syncing after Google Play Billing, RevenueCat, Adapty, or another provider confirms a successful purchase:
 
 ```kotlin
 lifecycleScope.launch {
@@ -98,27 +58,41 @@ lifecycleScope.launch {
 }
 ```
 
-If your purchase library lets you decide when to acknowledge, consume, or complete the transaction, call `syncAllTransactions()` first.
+Call it before acknowledging or consuming the purchase when your purchase library controls that step.
+
+## Optional
+
+### Step 3: Referral Codes
+
+Referral codes work alongside affiliate links when a link isn't practical, such as in conversations, podcasts, videos, events, or print.
+
+Enable Referral Codes in one line:
 
 ```kotlin
-private fun handlePurchase(purchase: Purchase) {
-    if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-        lifecycleScope.launch {
-            goMarketMeSDK.syncAllTransactions()
+GoMarketMeReferralCodeTrigger()
+```
 
-            val consumeParams = ConsumeParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
+**Placement:** Put this referral UI on the first screen users see after installing the app, ideally during onboarding or immediately afterward.
 
-            billingClient.consumeAsync(consumeParams) { billingResult, _ ->
-                // Continue your purchase-completion flow.
-            }
-        }
-    }
+Customize its text, colors, typography, and layout directly in [https://gomarketme.net/marketer/settings#referral-codes](https://gomarketme.net/marketer/settings#referral-codes).
+
+Learn more about [Referral Codes](https://gomarketme.co/referral-codes/).
+
+### Step 4: Programmatic Affiliate Marketing
+
+Programmatic Affiliate Marketing lets your app personalize the user experience based on the affiliate and campaign that referred the user. For example, you can customize onboarding, paywalls, offers, or in-app content.
+
+After initialization finishes, read `affiliateMarketingData`:
+
+```kotlin
+GoMarketMe.affiliateMarketingData?.let { data ->
+    println("Affiliate ID: ${data.affiliate.id}")
+    println("Affiliate %: ${data.saleDistribution.affiliatePercentage}")
+    println("Campaign ID: ${data.campaign.id}")
 }
 ```
 
-That's it. GoMarketMe automatically attributes and reports affiliate sales.
+Learn more about [Programmatic Affiliate Marketing](https://gomarketme.co/programmatic-affiliate-marketing/).
 
 ## Platform Support
 

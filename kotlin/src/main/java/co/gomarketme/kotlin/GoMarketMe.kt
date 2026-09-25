@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import co.gomarketme.core.GoMarketMeGoogleCore
 import co.gomarketme.core.GoMarketMeGoogleCoreConfiguration
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 
 /**
@@ -16,7 +17,8 @@ data class GoMarketMeAffiliateMarketingData(
     val saleDistribution: SaleDistribution,
     val affiliateCampaignCode: String,
     val deviceId: String,
-    val offerCode: String?
+    val offerCode: String?,
+    val referralCode: String? = null
 ) {
     companion object {
         fun fromMap(map: Map<String, Any?>?): GoMarketMeAffiliateMarketingData? {
@@ -30,7 +32,8 @@ data class GoMarketMeAffiliateMarketingData(
                 saleDistribution = SaleDistribution.fromMap(map.mapValue("sale_distribution")),
                 affiliateCampaignCode = map.stringValue("affiliate_campaign_code"),
                 deviceId = map.stringValue("device_id"),
-                offerCode = map.stringValue("offer_code").takeIf { it.isNotBlank() }
+                offerCode = map.stringValue("offer_code").takeIf { it.isNotBlank() },
+                referralCode = map.stringValue("referral_code").takeIf { it.isNotBlank() }
             )
         }
     }
@@ -103,9 +106,10 @@ data class GoMarketMeTransactionSyncResult(
 
 object GoMarketMe {
     private const val sdkType = "Kotlin"
-    private const val sdkVersion = "5.0.2"
+    private const val sdkVersion = "6.0.0"
 
     private var core: GoMarketMeGoogleCore? = null
+    private var initialization = CompletableDeferred<Unit>()
 
     var affiliateMarketingData: GoMarketMeAffiliateMarketingData? = null
         private set
@@ -114,6 +118,7 @@ object GoMarketMe {
      * Initializes GoMarketMe. The SDK prepares attribution asynchronously.
      */
     fun initialize(context: Context, apiKey: String) {
+        if (core != null) return
         val appContext = context.applicationContext
         val googleCore = core ?: GoMarketMeGoogleCore(appContext)
         core = googleCore
@@ -137,9 +142,28 @@ object GoMarketMe {
 
                 googleCore.configure(config)
                 googleCore.start()
+                initialization.complete(Unit)
             } catch (throwable: Throwable) {
+                initialization.completeExceptionally(throwable)
                 println("GoMarketMe initialization failed: ${throwable.message}")
             }
+        }
+    }
+
+    /** Loads the complete remotely configured referral-code appearance. */
+    suspend fun referralCodeSettings(): Map<String, Any?> {
+        initialization.await()
+        return (core ?: throw IllegalStateException("Initialize GoMarketMe first."))
+            .referralCodeSettings()
+    }
+
+    /** Opens the shared referral sheet. Callback runs on the main thread on apply or cancel. */
+    suspend fun showReferralCodeSheet(activity: android.app.Activity, showTrigger: Boolean = false, onResult: (GoMarketMeAffiliateMarketingData?) -> Unit = {}) {
+        val googleCore = core ?: throw IllegalStateException("Initialize GoMarketMe first.")
+        googleCore.showReferralCodeSheet(activity, showTrigger) { response ->
+            val data = GoMarketMeAffiliateMarketingData.fromMap(response)
+            if (response != null) affiliateMarketingData = data
+            onResult(data)
         }
     }
 

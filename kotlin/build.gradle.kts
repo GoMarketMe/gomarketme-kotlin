@@ -1,9 +1,18 @@
 plugins {
     id("com.android.library")
     id("maven-publish")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
-version = "5.0.2"
+// Hosts opting out of AGP's built-in Kotlin must still compile this SDK's Kotlin sources.
+if (providers.gradleProperty("android.builtInKotlin").orNull == "false") {
+    apply(plugin = "org.jetbrains.kotlin.android")
+}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+}
+
+version = "6.0.0"
 
 android {
     namespace = "co.gomarketme.kotlin"
@@ -28,6 +37,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     publishing {
@@ -64,10 +77,13 @@ afterEvaluate {
 }
 
 dependencies {
-    implementation(files("libs/core-5.0.1.jar"))
+    implementation(files("libs/core-6.0.0.jar"))
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("com.android.billingclient:billing-ktx:8.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation(platform("androidx.compose:compose-bom:2026.04.01"))
+    api("androidx.compose.ui:ui")
+    implementation("androidx.compose.foundation:foundation")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
